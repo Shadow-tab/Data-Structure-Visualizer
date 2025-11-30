@@ -1,6 +1,6 @@
 #include "AVL.h"
-using namespace std;
-node::node(int dat) {
+//using namespace std;
+AVLnode::AVLnode(int dat) {
     data = dat;
     left = nullptr;
     right = nullptr;
@@ -11,19 +11,19 @@ AVLTree::AVLTree() {
     root = nullptr;
 }
 
-int AVLTree::height(node* n) {
+int AVLTree::height(AVLnode* n) {
     if (n == nullptr) return 0;
     return n->height;
 }
 
-int AVLTree::balancefactor(node* n) {
+int AVLTree::balancefactor(AVLnode* n) {
     if (n == nullptr) return 0;
     return height(n->left) - height(n->right);
 }
 
-node* AVLTree::rightrotation(node* x) {
-    node* temp = x->left;
-    node* temp2 = temp->right;
+AVLnode* AVLTree::rightrotation(AVLnode* x) {
+    AVLnode* temp = x->left;
+    AVLnode* temp2 = temp->right;
 
     x->left = temp2;
     temp->right = x;
@@ -39,9 +39,9 @@ node* AVLTree::rightrotation(node* x) {
     return temp;
 }
 
-node* AVLTree::leftrotation(node* x) {
-    node* temp = x->right;
-    node* temp2 = temp->left;
+AVLnode* AVLTree::leftrotation(AVLnode* x) {
+    AVLnode* temp = x->right;
+    AVLnode* temp2 = temp->left;
 
     x->right = temp2;
     temp->left = x;
@@ -57,9 +57,9 @@ node* AVLTree::leftrotation(node* x) {
     return temp;
 }
 
-node* AVLTree::insert(node* n, int key) {
+AVLnode* AVLTree::insert(AVLnode* n, int key) {
     if (n == nullptr)
-        return new node(key);
+        return new AVLnode(key);
 
     if (key < n->data)
         n->left = insert(n->left, key);
@@ -93,7 +93,7 @@ node* AVLTree::insert(node* n, int key) {
     return n;
 }
 
-node* AVLTree::deleteAVL(node* r, int key) {
+AVLnode* AVLTree::deleteAVL(AVLnode* r, int key) {
     if (r == nullptr) return r;
 
     if (key < r->data)
@@ -106,17 +106,17 @@ node* AVLTree::deleteAVL(node* r, int key) {
             return nullptr;
         }
         else if (r->left == nullptr) {
-            node* temp = r->right;
+            AVLnode* temp = r->right;
             delete r;
             r = temp;
         }
         else if (r->right == nullptr) {
-            node* temp = r->left;
+            AVLnode* temp = r->left;
             delete r;
             r = temp;
         }
         else {
-            node* temp = r->right;
+            AVLnode* temp = r->right;
             while (temp->left)
                 temp = temp->left;
             r->data = temp->data;
@@ -159,6 +159,6 @@ void AVLTree::deleteKey(int key) {
     root = deleteAVL(root, key);
 }
 
-node* AVLTree::getRoot() {
+AVLnode* AVLTree::getRoot() {
     return root;
 }

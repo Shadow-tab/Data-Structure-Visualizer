@@ -1,4 +1,4 @@
-ds-visualizer/
+Data-Structure-visualizer/
 │
 ├── README.md
 │

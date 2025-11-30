@@ -1,7 +1,7 @@
 #pragma once
 
 class heap {
-private:
+public:
     int arr[100];
     int size;
 
