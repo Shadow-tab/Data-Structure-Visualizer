@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Hash Table Visualizer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="hash.css" />
+  <!-- Anime.js for smooth animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="back-btn" href="index.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Menu
+    </a>
+    <h1>Hash Table Visualizer</h1>
+    <div class="status-badge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="wasmStatus">Initializing...</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="controls">
+      <div class="size-selector">
+        <label class="selector-label">Table Size:</label>
+        <select id="tableSize" class="size-select">
+          <option value="7">7 (Small)</option>
+          <option value="11" selected>11 (Medium)</option>
+          <option value="17">17 (Large)</option>
+          <option value="23">23 (X-Large)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="keyInput">Key</label>
+        <input id="keyInput" type="text" placeholder="Enter key" maxlength="20" />
+      </div>
+
+      <div class="input-group">
+        <label for="valueInput">Value</label>
+        <input id="valueInput" type="number" placeholder="Enter value" />
+      </div>
+      
+      <div class="button-group">
+        <button id="btnInsert" class="btn btn-primary" title="Insert key-value pair">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Insert
+        </button>
+        <button id="btnSearch" class="btn btn-info" title="Search for key">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 10L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Search
+        </button>
+        <button id="btnRemove" class="btn btn-secondary" title="Remove key">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Remove
+        </button>
+      </div>
+
+      <div class="quick-actions">
+        <span class="quick-label">Quick Actions:</span>
+        <button id="btnRandomInsert" class="btn-quick">🎲 Random</button>
+        <button id="btnTestCollision" class="btn-quick">⚠️ Collisions</button>
+        <button id="btnClear" class="btn-quick danger">🗑️ Clear</button>
+      </div>
+
+      <div class="display-options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="showHash" checked />
+          <span>Show Hash Values</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="showProbes" checked />
+          <span>Show Probe Count</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="animateProbing" checked />
+          <span>Animate Probing</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="visual">
+      <div class="canvas-container">
+        <canvas id="canvas" width="1000" height="600"></canvas>
+        <div id="emptyState" class="empty-state">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <rect x="10" y="10" width="60" height="10" rx="2" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <rect x="10" y="25" width="60" height="10" rx="2" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <rect x="10" y="40" width="60" height="10" rx="2" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <rect x="10" y="55" width="60" height="10" rx="2" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="40" y="75" text-anchor="middle" fill="#666" font-size="10">Open Addressing</text>
+          </svg>
+          <p>Insert keys to visualize hashing and collision resolution</p>
+        </div>
+        <div id="probeAnimation" class="probe-animation"></div>
+      </div>
+      <div id="hashInfo" class="hash-info" aria-live="polite"></div>
+      <div id="notification" class="notification"></div>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-card">
+        <h3>Hash Operations</h3>
+        <ul>
+          <li><strong>Insert:</strong> O(1) avg - Add key-value pair</li>
+          <li><strong>Search:</strong> O(1) avg - Find by key</li>
+          <li><strong>Remove:</strong> O(1) avg - Delete entry</li>
+          <li><strong>Hash Function:</strong> key.length % table_size</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Table Statistics</h3>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Size:</span>
+            <span class="stat-value" id="tableSizeStat">11</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Items:</span>
+            <span class="stat-value" id="itemCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Load:</span>
+            <span class="stat-value" id="loadFactor">0.0</span>
+          </div>
+        </div>
+        <div class="load-bar-container">
+          <div class="load-bar">
+            <div id="loadBarFill" class="load-bar-fill"></div>
+          </div>
+          <span class="load-label">Load Factor</span>
+        </div>
+      </div>
+      <div class="info-card concept-card">
+        <h3>Linear Probing</h3>
+        <p class="concept-text">
+          Uses <strong>Open Addressing</strong> with linear probing for collision resolution.
+          When a collision occurs, we probe the next slot: <code>index = (hash + i) % size</code>
+        </p>
+        <div class="collision-examples">
+          <div class="collision-item">
+            <span class="collision-status empty">⬜</span>
+            <span class="collision-desc">Empty slot</span>
+          </div>
+          <div class="collision-item">
+            <span class="collision-status occupied">🟦</span>
+            <span class="collision-desc">Occupied</span>
+          </div>
+          <div class="collision-item">
+            <span class="collision-status deleted">❌</span>
+            <span class="collision-desc">Deleted (tombstone)</span>
+          </div>
+          <div class="collision-item">
+            <span class="collision-status probing">🔍</span>
+            <span class="collision-desc">Probing</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Must load compiled WASM bundle first -->
+  <script src="wasm/ds.js"></script>
+  <!-- Page-specific logic -->
+  <script src="hash.js" type="module"></script>
+</body>
+</html>

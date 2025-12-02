@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Heap Visualizer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="heap.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="back-btn" href="index.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Menu
+    </a>
+    <h1>Heap Visualizer</h1>
+    <div class="status-badge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="wasmStatus">Initializing...</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="controls">
+      <div class="input-group">
+        <label for="valueInput">Value</label>
+        <input id="valueInput" type="number" placeholder="Enter integer" />
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">Heap Type:</label>
+        <div class="toggle-buttons">
+          <button id="btnMinHeap" class="toggle-btn active" data-type="min">Min Heap</button>
+          <button id="btnMaxHeap" class="toggle-btn" data-type="max">Max Heap</button>
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button id="btnInsert" class="btn btn-primary" title="Insert element">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Insert
+        </button>
+        <button id="btnExtract" class="btn btn-secondary" title="Extract root">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Extract Root
+        </button>
+      </div>
+
+      <div class="button-group">
+        <button id="btnPeek" class="btn btn-info" title="View root element">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 5V8L10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Peek Root
+        </button>
+        <button id="btnReset" class="btn btn-danger" title="Clear heap">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 5.5L12.5 13.5C12.4 14.3 11.7 15 10.9 15H5.1C4.3 15 3.6 14.3 3.5 13.5L2.5 5.5M6 7V12M10 7V12M11 5V2.5C11 1.7 10.3 1 9.5 1H6.5C5.7 1 5 1.7 5 2.5V5M1 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Reset
+        </button>
+      </div>
+
+      <div class="view-toggle">
+        <button id="btnTreeView" class="view-btn active">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="3" r="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="4" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="8" y1="5" x2="4" y2="8" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="8" y1="5" x2="12" y2="8" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          Tree View
+        </button>
+        <button id="btnArrayView" class="view-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="6" width="3" height="4" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="6.5" y="6" width="3" height="4" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="11" y="6" width="3" height="4" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          Array View
+        </button>
+      </div>
+    </section>
+
+    <section class="visual">
+      <div class="canvas-container">
+        <canvas id="canvas" width="1000" height="400"></canvas>
+        <div id="emptyState" class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="20" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="20" cy="44" r="6" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="44" cy="44" r="6" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="32" y1="28" x2="20" y2="38" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="32" y1="28" x2="44" y2="38" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+          </svg>
+          <p>Insert elements to build the heap</p>
+        </div>
+      </div>
+      <div id="heapDisplay" class="heap-display" aria-live="polite"></div>
+      <div id="notification" class="notification"></div>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-card">
+        <h3>Heap Operations</h3>
+        <ul>
+          <li><strong>Insert:</strong> O(log n) - Add and bubble up</li>
+          <li><strong>Extract Root:</strong> O(log n) - Remove and heapify</li>
+          <li><strong>Peek Root:</strong> O(1) - View min/max</li>
+          <li><strong>Build Heap:</strong> O(n) - From array</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Heap Info</h3>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Size:</span>
+            <span class="stat-value" id="heapSize">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Root:</span>
+            <span class="stat-value" id="rootValue">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Height:</span>
+            <span class="stat-value" id="heapHeight">0</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-card concept-card">
+        <h3>Heap Properties</h3>
+        <p class="concept-text">
+          A <strong>Min Heap</strong> maintains parent ≤ children (root is minimum).
+          A <strong>Max Heap</strong> maintains parent ≥ children (root is maximum).
+          Perfect for priority queues, heap sort, and finding kth largest/smallest elements.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Must load compiled WASM bundle first -->
+  <script src="wasm/ds.js"></script>
+  <!-- Page-specific logic -->
+  <script src="heap.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AVL Tree Visualizer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="avl.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="back-btn" href="index.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Menu
+    </a>
+    <h1>AVL Tree Visualizer</h1>
+    <div class="status-badge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="wasmStatus">Initializing...</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="controls">
+      <div class="input-group">
+        <label for="valueInput">Value</label>
+        <input id="valueInput" type="number" placeholder="Enter key" />
+      </div>
+      
+      <div class="button-group">
+        <button id="btnInsert" class="btn btn-primary" title="Insert key">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Insert
+        </button>
+        <button id="btnDelete" class="btn btn-secondary" title="Delete key">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Delete
+        </button>
+      </div>
+
+      <div class="button-group">
+        <button id="btnSearch" class="btn btn-info" title="Search for key">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 10L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Search
+        </button>
+        <button id="btnReset" class="btn btn-danger" title="Clear tree">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 5.5L12.5 13.5C12.4 14.3 11.7 15 10.9 15H5.1C4.3 15 3.6 14.3 3.5 13.5L2.5 5.5M6 7V12M10 7V12M11 5V2.5C11 1.7 10.3 1 9.5 1H6.5C5.7 1 5 1.7 5 2.5V5M1 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Reset
+        </button>
+      </div>
+
+      <div class="quick-actions">
+        <span class="quick-label">Quick Insert:</span>
+        <button id="btnRandom" class="btn-quick" title="Insert random values">🎲 Random</button>
+        <button id="btnSorted" class="btn-quick" title="Insert sorted sequence">📊 Sorted</button>
+      </div>
+
+      <div class="display-options">
+        <label class="checkbox-label">
+          <input type="checkbox" id="showBalance" checked />
+          <span>Show Balance Factors</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="showHeight" />
+          <span>Show Heights</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="visual">
+      <div class="canvas-container">
+        <canvas id="canvas" width="1000" height="500"></canvas>
+        <div id="emptyState" class="empty-state">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="25" r="10" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="25" cy="50" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="55" cy="50" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="40" y1="35" x2="25" y2="42" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="40" y1="35" x2="55" y2="42" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="40" y="70" text-anchor="middle" fill="#666" font-size="10">Self-Balancing BST</text>
+          </svg>
+          <p>Insert keys to build the AVL tree</p>
+        </div>
+      </div>
+      <div id="treeInfo" class="tree-info" aria-live="polite"></div>
+      <div id="notification" class="notification"></div>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-card">
+        <h3>AVL Operations</h3>
+        <ul>
+          <li><strong>Insert:</strong> O(log n) - Add with balancing</li>
+          <li><strong>Delete:</strong> O(log n) - Remove with balancing</li>
+          <li><strong>Search:</strong> O(log n) - Binary search</li>
+          <li><strong>Rotations:</strong> O(1) - LL, RR, LR, RL</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Tree Statistics</h3>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Nodes:</span>
+            <span class="stat-value" id="nodeCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Height:</span>
+            <span class="stat-value" id="treeHeight">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Root:</span>
+            <span class="stat-value" id="rootValue">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-card concept-card">
+        <h3>Balance Property</h3>
+        <p class="concept-text">
+          AVL maintains <strong>|BF| ≤ 1</strong> for every node, where balance factor (BF) = height(left) - height(right).
+          When violated, automatic rotations (LL, RR, LR, RL) restore balance, ensuring O(log n) operations.
+        </p>
+        <div class="rotation-guide">
+          <div class="rotation-item">
+            <span class="rotation-name">LL:</span>
+            <span class="rotation-desc">Right rotation</span>
+          </div>
+          <div class="rotation-item">
+            <span class="rotation-name">RR:</span>
+            <span class="rotation-desc">Left rotation</span>
+          </div>
+          <div class="rotation-item">
+            <span class="rotation-name">LR:</span>
+            <span class="rotation-desc">Left-Right rotation</span>
+          </div>
+          <div class="rotation-item">
+            <span class="rotation-name">RL:</span>
+            <span class="rotation-desc">Right-Left rotation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Must load compiled WASM bundle first -->
+  <script src="wasm/ds.js"></script>
+  <!-- Page-specific logic -->
+  <script src="avl.js" type="module"></script>
+</body>
+</html>

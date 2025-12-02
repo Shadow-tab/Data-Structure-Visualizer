@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Graph Visualizer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="graph.css" />
+  <!-- Anime.js for smooth animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="back-btn" href="index.html">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Menu
+    </a>
+    <h1>Graph Visualizer</h1>
+    <div class="status-badge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="wasmStatus">Initializing...</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls" aria-label="controls">
+      <div class="graph-type-selector">
+        <label class="selector-label">Graph Type:</label>
+        <div class="type-buttons">
+          <button id="btnDirected" class="type-btn active" data-type="directed">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="5" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="15" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 10H12M10 8L12 10L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Directed
+          </button>
+          <button id="btnUndirected" class="type-btn" data-type="undirected">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="5" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="15" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="8" y1="10" x2="12" y2="10" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Undirected
+          </button>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="btnAddNode" class="btn btn-primary" title="Add new vertex">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 5V11M5 8H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Add Node
+        </button>
+        <button id="btnRemoveNode" class="btn btn-secondary" title="Remove selected vertex">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M5 8H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Remove Node
+        </button>
+      </div>
+
+      <div class="edge-controls">
+        <input id="edgeFrom" type="number" placeholder="From" min="0" />
+        <input id="edgeTo" type="number" placeholder="To" min="0" />
+        <input id="edgeWeight" type="number" placeholder="Weight" value="1" step="0.1" />
+        <button id="btnAddEdge" class="btn btn-success" title="Add edge between vertices">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 8H14M12 6L14 8L12 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Add Edge
+        </button>
+        <button id="btnRemoveEdge" class="btn btn-danger" title="Remove edge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Remove Edge
+        </button>
+      </div>
+
+      <div class="algorithm-controls">
+        <label class="algo-label">Algorithms:</label>
+        <button id="btnBFS" class="btn-algo">
+          <span>BFS</span>
+        </button>
+        <button id="btnDFS" class="btn-algo">
+          <span>DFS</span>
+        </button>
+        <button id="btnDijkstra" class="btn-algo">
+          <span>Dijkstra</span>
+        </button>
+        <button id="btnPrim" class="btn-algo">
+          <span>Prim MST</span>
+        </button>
+        <input id="algoStart" type="number" placeholder="Start vertex" min="0" />
+      </div>
+
+      <div class="action-buttons">
+        <button id="btnClear" class="btn btn-danger">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M13.5 5.5L12.5 13.5C12.4 14.3 11.7 15 10.9 15H5.1C4.3 15 3.6 14.3 3.5 13.5L2.5 5.5M6 7V12M10 7V12M11 5V2.5C11 1.7 10.3 1 9.5 1H6.5C5.7 1 5 1.7 5 2.5V5M1 5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Clear Graph
+        </button>
+        <button id="btnSample" class="btn btn-info">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 2L2 6L8 10L14 6L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          Sample Graph
+        </button>
+      </div>
+    </section>
+
+    <section class="visual">
+      <div class="canvas-container">
+        <canvas id="canvas" width="1000" height="500"></canvas>
+        <div id="emptyState" class="empty-state">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="20" cy="20" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="60" cy="20" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="20" cy="60" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <circle cx="60" cy="60" r="8" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="28" y1="20" x2="52" y2="20" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="20" y1="28" x2="20" y2="52" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="60" y1="28" x2="60" y2="52" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="28" y1="60" x2="52" y2="60" stroke="#555" stroke-width="2" stroke-dasharray="4 4"/>
+          </svg>
+          <p>Add nodes and edges to build your graph</p>
+        </div>
+        <div id="graphHint" class="graph-hint">💡 Click nodes to select, drag to move</div>
+      </div>
+      <div id="graphInfo" class="graph-info" aria-live="polite"></div>
+      <div id="notification" class="notification"></div>
+    </section>
+
+    <section class="info-panel">
+      <div class="info-card">
+        <h3>Graph Algorithms</h3>
+        <ul>
+          <li><strong>BFS:</strong> O(V + E) - Breadth-first traversal</li>
+          <li><strong>DFS:</strong> O(V + E) - Depth-first traversal</li>
+          <li><strong>Dijkstra:</strong> O((V + E) log V) - Shortest path</li>
+          <li><strong>Prim:</strong> O((V + E) log V) - Minimum spanning tree</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Graph Statistics</h3>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Vertices:</span>
+            <span class="stat-value" id="vertexCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Edges:</span>
+            <span class="stat-value" id="edgeCount">0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Type:</span>
+            <span class="stat-value" id="graphType">Directed</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-card concept-card">
+        <h3>Graph Representation</h3>
+        <p class="concept-text">
+          Uses <strong>Adjacency List</strong> representation where each vertex maintains a list of its neighbors.
+          <strong>Directed graphs</strong> have one-way edges, while <strong>undirected graphs</strong> have two-way edges.
+          Perfect for network analysis, pathfinding, and connectivity problems.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Must load compiled WASM bundle first -->
+  <script src="wasm/ds.js"></script>
+  <!-- Page-specific logic -->
+  <script src="graph.js" type="module"></script>
+</body>
+</html>
