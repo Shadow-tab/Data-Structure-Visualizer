@@ -1,5 +1,5 @@
-web/wasm/
+# web/wasm/
 .vscode/
 emsdk/
-instructions.txt
-ds-visualizer.txt
+instructions.txt/
+ds-visualizer.txt/
