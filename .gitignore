@@ -1,3 +1,5 @@
 web/wasm/
 .vscode/
 emsdk/
+instructions.txt
+ds-visualizer.txt

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Structure Visualizer</title>
+    <link rel="icon" href="assets/icon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -36,8 +37,15 @@
         </header>
 
         <main class="content">
-            <h1 class="main-title">Choose a Data Structure</h1>
-            <p class="description">Visualize and understand fundamental data structures through interactive demonstrations</p>
+            <div class="hero-section">
+                <div class="hero-text">
+                    <h1 class="main-title">Choose a Data Structure</h1>
+                    <p class="description">Visualize and understand fundamental data structures through interactive demonstrations</p>
+                </div>
+                <div class="hero-image">
+                    <img src="assets/avlimage.png" alt="AVL Tree Visualization" />
+                </div>
+            </div>
 
             <div class="menu">
                 <a href="linkedlist.html" class="menu-card" data-structure="linked-list">
@@ -137,6 +145,42 @@
                     </div>
                 </a>
             </div>
+           <section class="tech-stack-section">
+    <div class="tech-stack-left">
+        <span class="tech-badge">Tech Stack</span>
+
+        <h2 class="tech-title">Built with WASM and C++</h2>
+
+        <p class="tech-subtitle">
+            Powered by WebAssembly for high-performance execution,<br>
+            Emscripten for C++ compilation, and Canvas for rendering.
+        </p>
+    </div>
+
+    <div class="tech-stack-right">
+        <div class="tech-card">
+            <h3>WebAssembly (WASM)</h3>
+            <p>Near-native performance in the browser.</p>
+        </div>
+
+        <div class="tech-card">
+            <h3>C++</h3>
+            <p>Core algorithms written in optimized C++.</p>
+        </div>
+
+        <div class="tech-card">
+            <h3>Emscripten</h3>
+            <p>Compiles C++ → WebAssembly for browser execution.</p>
+        </div>
+
+        <div class="tech-card">
+            <h3>Canvas+Anime.js</h3>
+            <p>Fast pixel level rendering for animations.</p>
+        </div>
+    </div>
+</section>
+
+
         </main>
 
         <footer class="footer">
@@ -144,9 +188,7 @@
             <div class="footer-links">
                 <a href="about.html" class="footer-link">About</a>
                 <span>•</span>
-                <a href="documentation.html" class="footer-link">Documentation</a>
-                <span>•</span>
-                <a href="https://github.com/Shadow-tab" class="footer-link">GitHub</a>
+                <a href="https://github.com/Shadow-tab/Data-Structure-Visualizer" class="footer-link">GitHub</a>
             </div>
         </footer>
     </div>

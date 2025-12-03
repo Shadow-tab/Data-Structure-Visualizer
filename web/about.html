@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Data Structure Visualizer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #e8eaed;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #1e1e30;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #7c8df8;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #667eea;
+      border-bottom: 2px solid #2d2d44;
+      padding-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #b8bbc4;
+      font-size: 16px;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .tech-badge {
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 25px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="back-link">← Back to Home</a>
+      <h1>About This Project</h1>
+    </header>
+
+    <div class="content">
+      <h2>Overview</h2>
+      <p>
+        The Data Structure Visualizer is an interactive educational tool designed to help students and developers 
+        understand fundamental data structures through beautiful, real-time visualizations. Each data structure 
+        is implemented in high-performance C++ and compiled to WebAssembly in your browser.
+      </p>    
+      <h2>Tools Used</h2>
+      <div class="tech-stack">
+        <span class="tech-badge">C++</span>
+        <span class="tech-badge">WebAssembly</span>
+        <span class="tech-badge">JavaScript</span>
+        <span class="tech-badge">HTML5 Canvas</span>
+        <span class="tech-badge">CSS</span>
+        <span class="tech-badge">Anime.js</span>
+        <span class="tech-badge">Emscripten</span>
+      </div>
+      <p>
+        This project combines the power of C++ for high-performance data structure implementations with 
+        the flexibility of web technologies for beautiful, interactive visualizations. WebAssembly bridges 
+        the gap, allowing compiled C++ code to run at near-native speed in the browser.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
