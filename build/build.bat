@@ -1,5 +1,5 @@
 @echo off
-REM Run this from project root. Make sure you ran emsdk_env.ps1 in this terminal.
+REM 
 
 set SRC=src\ds
 set BINDINGS=src
